@@ -1,0 +1,6 @@
+date,value_date,narration,counterparty,channel,subtype,direction,amount,balance,account,ref_id,label,confidence,internal_transfer,document_id
+2026-06-03,,Paid to Blinkit,,OTHER,,DEBIT,340.00,,,,,0.2,,d41b483b-9ba1-48a1-b785-6440fb3c7cd3
+2026-06-05,,Received from Rahul Verma,,OTHER,,CREDIT,1200.00,,,,,0.2,,d41b483b-9ba1-48a1-b785-6440fb3c7cd3
+2026-06-08,,Paid to Zomato,,OTHER,,DEBIT,520.50,,,,,0.2,,d41b483b-9ba1-48a1-b785-6440fb3c7cd3
+2026-06-12,,Paid to Uber,,OTHER,,DEBIT,180.00,,,,,0.2,,d41b483b-9ba1-48a1-b785-6440fb3c7cd3
+2026-06-20,,Received from Employer Payroll,,OTHER,,CREDIT,55000.00,,,,,0.2,,d41b483b-9ba1-48a1-b785-6440fb3c7cd3

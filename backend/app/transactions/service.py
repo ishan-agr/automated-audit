@@ -9,6 +9,7 @@ from __future__ import annotations
 from sqlmodel import Session, delete, select
 
 from app.bank_profiles.axis import parse_axis_header, parse_axis_tables
+from app.bank_profiles.tabular import is_tabular, parse_tabular
 from app.documents.models import AuditDocument, DocStatus
 from app.extraction.pipeline import work_key
 from app.extraction.tables import TableExtractor
@@ -36,14 +37,26 @@ def structure_document(
     doc = session.get(AuditDocument, doc_id)
     if doc is None:
         raise DocumentNotFound(doc_id)
-    extractor = table_extractor or _default_extractor()
 
     data = get_store().load(work_key(doc_id))
-    tables, text = extractor.extract(data)
 
-    parsed = parse_axis_tables(tables)
-    header = parse_axis_header(text)
-    account_no = header.get("account_no")
+    if is_tabular(doc.filename):
+        # CSV / XLSX (UPI-app exports) — no layout model, direct row map.
+        parsed = parse_tabular(data, doc.filename)
+        account_no = None
+        header: dict[str, str] = {}
+        dates = [t.tran_date for t in parsed.txns if t.tran_date]
+        if dates:
+            header = {
+                "period_from": min(dates).isoformat(),
+                "period_to": max(dates).isoformat(),
+            }
+    else:
+        extractor = table_extractor or _default_extractor()
+        tables, text = extractor.extract(data)
+        parsed = parse_axis_tables(tables)
+        header = parse_axis_header(text)
+        account_no = header.get("account_no")
 
     # idempotent re-structure
     session.exec(delete(ExtractedTransaction).where(ExtractedTransaction.document_id == doc_id))

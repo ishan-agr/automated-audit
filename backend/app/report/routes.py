@@ -3,9 +3,11 @@ separate endpoint (LLD §5.4/§5.6)."""
 
 from __future__ import annotations
 
+import json
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlmodel import Session
 
@@ -70,6 +72,38 @@ def generate(
     try:
         return service.generate_audit(
             session, audit_id, payload.range_from, payload.range_to
+        )
+    except service.AuditNotFound as exc:
+        raise HTTPException(404, "audit not found") from exc
+
+
+@router.get("/export")
+def export(
+    audit_id: str,
+    format: str = Query("json", pattern="^(json|csv)$"),
+    range_from: date | None = None,
+    range_to: date | None = None,
+    session: Session = Depends(get_session),
+):
+    """Download the report as JSON (reconciliation + outputs) or the
+    transactions as CSV. Respects the optional date range like `generate`."""
+    try:
+        if format == "csv":
+            body = service.transactions_csv(session, audit_id, range_from, range_to)
+            return Response(
+                content=body,
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": f'attachment; filename="{audit_id}-transactions.csv"'
+                },
+            )
+        data = service.generate_audit(session, audit_id, range_from, range_to)
+        return Response(
+            content=json.dumps(data, indent=2),
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f'attachment; filename="{audit_id}-report.json"'
+            },
         )
     except service.AuditNotFound as exc:
         raise HTTPException(404, "audit not found") from exc

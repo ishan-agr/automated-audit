@@ -21,6 +21,7 @@ dev = [
     "ruff>=0.6",
     "httpx>=0.27",
     "python-multipart>=0.0.9",
+    "uvicorn[standard]>=0.30",  # ASGI server for local dev (`fastapi dev` / uvicorn)
 ]
 # Real extraction engine (heavy: torch + docling + model weights). Optional so the
 # base install stays light; enable with: uv pip install -e ".[docling]"
@@ -55,4 +56,5 @@ ignore = ["B008", "UP042"]
 # test fixtures embed real statement rows (long lines) + en-dashes in comments.
 "tests/test_axis_parser.py" = ["E501"]
 "tests/test_structuring.py" = ["E501"]
+"tests/test_tabular.py" = ["E501"]
 "tests/test_reconcile.py" = ["RUF003"]

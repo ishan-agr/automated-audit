@@ -89,8 +89,11 @@ async def upload_document(
     )
 
     if not _is_pdf(hashed.data):
-        # Non-PDF (CSV/XLSX) lands in Phase 2's tabular path; store + park.
-        doc.status = DocStatus.PENDING.value
+        # CSV / XLSX (UPI-app exports): no extraction/OCR needed — the rows are
+        # the data. Store as the work file and mark EXTRACTED (ready to structure).
+        store.save(work_key(doc.id), hashed.data)
+        doc.status = DocStatus.EXTRACTED.value
+        doc.password_status = PasswordStatus.NOT_REQUIRED.value
         session.add(doc)
         session.commit()
         session.refresh(doc)

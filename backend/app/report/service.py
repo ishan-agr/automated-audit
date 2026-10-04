@@ -4,6 +4,8 @@ operation the date range triggers (reconcile pre-pass + report DAG → one artif
 
 from __future__ import annotations
 
+import csv
+import io
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
@@ -215,3 +217,52 @@ def generate_audit(
         "outputs": outputs,
         "warnings": warnings,
     }
+
+
+_CSV_HEADER = [
+    "date", "value_date", "narration", "counterparty", "channel", "subtype",
+    "direction", "amount", "balance", "account", "ref_id", "label",
+    "confidence", "internal_transfer", "document_id",
+]
+
+
+def transactions_csv(
+    session: Session,
+    audit_id: str,
+    range_from: date | None = None,
+    range_to: date | None = None,
+) -> str:
+    """Flat CSV of the audit's structured transactions, filtered to the range."""
+    if session.get(Audit, audit_id) is None:
+        raise AuditNotFound(audit_id)
+    stmt = select(ExtractedTransaction).where(ExtractedTransaction.audit_id == audit_id)
+    if range_from:
+        stmt = stmt.where(ExtractedTransaction.tran_date >= range_from)
+    if range_to:
+        stmt = stmt.where(ExtractedTransaction.tran_date <= range_to)
+    stmt = stmt.order_by(ExtractedTransaction.tran_date, ExtractedTransaction.row_index)
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(_CSV_HEADER)
+    for t in session.exec(stmt):
+        writer.writerow(
+            [
+                t.tran_date.isoformat() if t.tran_date else "",
+                t.value_date.isoformat() if t.value_date else "",
+                t.narration_raw,
+                t.counterparty_name or "",
+                t.channel or "",
+                t.txn_subtype or "",
+                t.direction,
+                str(t.amount),
+                str(t.balance) if t.balance is not None else "",
+                t.source_account or "",
+                t.ref_id or "",
+                t.user_label or "",
+                t.confidence,
+                "yes" if t.is_internal_transfer else "",
+                t.document_id,
+            ]
+        )
+    return buf.getvalue()
