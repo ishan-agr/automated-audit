@@ -1,7 +1,7 @@
 # Low-Level Design (LLD)
 
 > Scope: the complete v1 design — domain model, DB schema, extraction pipeline
-> (reusing the magoneai KB engine), the card/operation compute engine, the audit
+> (reusing the Docling KB engine), the card/operation compute engine, the audit
 > lifecycle state machine, and the REST/stream API surface.
 
 ---
@@ -159,7 +159,7 @@ enforced on save (reject a cycle with the offending path).
 
 ---
 
-## 2. Extraction pipeline (reuses the magoneai KB engine)
+## 2. Extraction pipeline (reuses the Docling KB engine)
 
 We fork the KB `DocumentIngestionWorkflow` into an **`AuditExtractionWorkflow`**.
 A **format router** at the head picks the path by file type; both converge on the
@@ -170,7 +170,7 @@ same `parse_transactions → structure → persist → reconcile` tail:
   "clean per-page text + tables" is reused **unchanged**; only the
   chunk→embed→index tail is replaced.
 - **CSV / XLSX** (spreadsheet UPI exports — GPay/PhonePe/Paytm/bank CSV) → a
-  lightweight **tabular path** (adapting magoneai's `static_kb` tabular route):
+  lightweight **tabular path** (adapting the `static_kb` tabular route):
   read rows directly with pandas/openpyxl (or DuckDB for large files), **no layout
   model, no OCR**. Rows map straight into `parse_transactions` via a per-source
   column profile. Much cheaper and more reliable than PDF for the same data.

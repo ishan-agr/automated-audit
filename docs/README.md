@@ -11,7 +11,7 @@ math operations, all computed over cached extracted transactions.
 | Reference | What we took from it |
 |-----------|----------------------|
 | `automated-audit/AcctStatement_XXX7229_02082026.pdf` | Axis Bank statement — header + transaction-table layout; the **narration grammar** (`UPI/P2M/<ref>/<counterparty>/UPI/<bank>`) that yields the name / UPI-id / acc-no identifiers |
-| `D:\magoneai_v2\be\knowledge` | The static-KB extraction pipeline we **reuse**: Temporal workflow + Docling + DocLayout-YOLO page router + TableFormer + **converter pool** (job pooling) + **paged multi-page** extraction + heartbeats + S3 payload offload |
+| Reference KB engine | The static-KB extraction pipeline we **reuse**: Temporal workflow + Docling + DocLayout-YOLO page router + TableFormer + **converter pool** (job pooling) + **paged multi-page** extraction + heartbeats + S3 payload offload |
 
 ## Documents
 
@@ -24,7 +24,7 @@ math operations, all computed over cached extracted transactions.
 
 An **Audit** owns **multiple Sources** (bank statement PDFs *and* UPI-app CSV/XLSX
 exports — mixed formats) and a **DateRange**. Each source triggers a Temporal
-**extraction workflow** that reuses the magoneai KB engine (PDF) or a light tabular
+**extraction workflow** that reuses a Docling KB engine (PDF) or a light tabular
 parser (CSV/XLSX) and emits **ExtractedTransaction** rows into a durable, immutable
 cache. The **date range is the trigger** that *generates the audit* — and the
 audit's innate output is a **reconciled report**: a pre-pass merges/de-dupes the

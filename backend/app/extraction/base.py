@@ -1,6 +1,6 @@
 """Extractor interface. The pypdf baseline runs here today; a Docling adapter
-(reusing the magoneai KB converter pool + router) implements the same protocol
-later without touching the pipeline.
+(converter pool + layout router) implements the same protocol later without
+touching the pipeline.
 """
 
 from __future__ import annotations

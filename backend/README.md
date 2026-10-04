@@ -9,7 +9,7 @@ See `../docs/` for the blueprint, LLD, SLM research, and tech stack.
 password gate wired in, running end-to-end (verified on the real 8-page Axis
 reference PDF: upload → 8/8 pages extracted). Extraction runs on a **pypdf paged
 baseline** behind an `Extractor` interface; the Docling + Temporal adapter (reusing
-the magoneai KB engine) slots in later without changing the pipeline.
+the Docling KB engine) slots in later without changing the pipeline.
 
 ```
 app/

@@ -48,7 +48,7 @@ automated-audit/
     transactions/     # ExtractedTransaction model, query/filter, manual edits
     report/           # AuditNode/Edge model + DAG compute engine + evaluate API
     slm/              # NarrationStructurer interface + llama.cpp/Ollama client
-    core/             # config, logging, db, auth (reuse magoneai patterns)
+    core/             # config, logging, db, auth (shared core patterns)
     temporal/         # worker.py (audit-extraction queue), config
   frontend/           # Vite + React + TS (see 04_TECH_STACK.md)
   docs/               # these design docs
@@ -61,7 +61,7 @@ automated-audit/
 **Goal:** repo, infra, and a walking skeleton.
 - Scaffold `backend/` (FastAPI) + `frontend/` (Vite) + `infra/docker-compose`
   (Postgres, Temporal, MinIO, Ollama).
-- Port `core/` (config, logging, db/SQLModel session, auth) from magoneai patterns.
+- Port `core/` (config, logging, db/SQLModel session, auth) from shared core patterns.
 - CI: lint (ruff), type (mypy/pyright), test (pytest), FE (eslint/tsc/vitest).
 - **Exit:** `GET /health` green; empty audit table migrated; one Temporal worker boots.
 

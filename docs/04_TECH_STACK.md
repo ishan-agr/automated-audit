@@ -8,7 +8,7 @@ dictates the frontend core. The rest is chosen to stay modular, typed, and light
 
 | Concern | Choice | Why |
 |---------|--------|-----|
-| Framework | **React 18 + TypeScript + Vite** | Fast HMR, typed, matches the existing magoneai FE; huge ecosystem for the pieces below. |
+| Framework | **React 18 + TypeScript + Vite** | Fast HMR, typed, matches our existing FE stack; huge ecosystem for the pieces below. |
 | **Node/card canvas** | **React Flow (`@xyflow/react`)** | Purpose-built for draggable nodes + typed connection handles + edges — exactly the card→operator→output graph. Custom node types render each card kind; connection validation enforces port types on the client, the server re-validates. |
 | Styling | **Tailwind CSS** + **shadcn/ui** (Radix primitives) | "Sleek + modular": copy-in components you own, accessible, themeable via CSS vars; no heavyweight component-library lock-in. |
 | Server state | **TanStack Query** | Caching, background refetch, mutations for audits/documents/transactions; pairs with the SSE progress stream. |
@@ -32,7 +32,7 @@ invalid connections are refused with a hint. Autosave the graph (debounced `PUT
 
 | Concern | Choice | Why |
 |---------|--------|-----|
-| API | **FastAPI (Python 3.11+)** + **Pydantic v2** | Matches magoneai; async; typed schemas mirror the FE Zod types. |
+| API | **FastAPI (Python 3.11+)** + **Pydantic v2** | Matches our stack; async; typed schemas mirror the FE Zod types. |
 | Workflow orchestration | **Temporal** | Reused from the KB engine — retry isolation, heartbeats, resume, worker isolation for heavy extraction. |
 | DB / ORM | **PostgreSQL + SQLModel/SQLAlchemy** | Relational core + **JSONB** for flexible `identifiers`, `DocumentMeta.kv`, and node `config`/`ui`. GIN index on identifiers. |
 | Migrations | **Alembic** | Same as the reference codebase. |
@@ -40,7 +40,7 @@ invalid connections are refused with a hint. Autosave the graph (debounced `PUT
 | Extraction (PDF) | **Docling + DocLayout-YOLO + TableFormer** via the ported **converter pool** | Reused wholesale; job pooling + paged multi-page baked in. |
 | Extraction (CSV/XLSX) | **pandas + openpyxl** (+ **DuckDB** for large files) | UPI-app spreadsheet exports parse directly to rows — no layout model, no OCR; cheapest reliable path. |
 | Local SLM (**optional toggle**) | **Ollama / llama.cpp** serving **Qwen3-4B GGUF** behind a `NarrationStructurer` interface | Default **off**; deterministic parsing ships v1. When on, adds grammar-constrained "better parse" for flagged rows; swappable to vLLM on a bigger box. |
-| Auth | reuse magoneai org/user scoping | keep columns; run single-org locally. |
+| Auth | reuse org/user scoping | keep columns; run single-org locally. |
 
 ## Infra / dev
 
